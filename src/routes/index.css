@@ -1,0 +1,18 @@
+/* base 和 components 是可选的，请酌情添加 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  background: linear-gradient(to bottom, transparent, #fff) #eceeef;
+}
+
+div,
+p {
+  margin: 0;
+  padding: 0;
+}

@@ -1,0 +1,28 @@
+$chu-color: #284878;
+$han-color: #e35425;
+
+
+.chess_pieces_wrap {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 25px;
+  position: absolute;
+  z-index: 1;
+  color: #fff;
+  transition: left 1s, top 1s; /* 添加过渡效果 */
+}
+.camp_chu {
+  border: 1px solid $chu-color;
+  
+  background-color: $chu-color;
+}
+.camp_han {
+  border: 1px solid $han-color;
+  background-color: $han-color;
+}
+.selected {
+  background-color: #f9ff4f;
+  color: #000;
+}
