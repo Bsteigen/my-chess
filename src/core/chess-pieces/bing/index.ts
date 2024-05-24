@@ -1,4 +1,5 @@
 import BaseChessPiece from '../baseChessPiece';
+import { Position } from '@/types';
 import { EChessCamp } from '@/types/enum/chess';
 
 export default class Bing extends BaseChessPiece {
@@ -6,34 +7,39 @@ export default class Bing extends BaseChessPiece {
     super('兵', x, y, size);
   }
 
-  getValue() {
+  protected getValue() {
     if (this.camp === EChessCamp.chu) {
       this.setChildren('卒');
     }
     return this;
   }
 
-  calculatePoints(): void {
+  protected findPoints() {
     if (this.camp === EChessCamp.han) {
-      if (this.y >= 3 && this.y < 5) {
-        this.setPoints([[this.x, this.y + 1]]);
-      } else if (this.y >= 5 && this.y < 10) {
-        this.setPoints([
-          [this.x, this.y + 1],
-          [this.x - 1, this.y],
-          [this.x + 1, this.y],
-        ]);
+      if (this.y < 5 && this.y >= 3) {
+        this.checkMoveS();
+      } else if (this.y >= 5) {
+        this.checkMoveE();
+        this.checkMoveW();
+        this.checkMoveS();
       }
     } else if (this.camp === EChessCamp.chu) {
-      if (this.y === 6 || this.y === 5) {
-        this.setPoints([[this.x, this.y - 1]]);
-      } else if (this.y >= 0 && this.y < 5) {
-        this.setPoints([
-          [this.x, this.y - 1],
-          [this.x - 1, this.y],
-          [this.x + 1, this.y],
-        ]);
+      if (this.y > 4 && this.y <= 6) {
+        this.checkMoveN();
+      } else if (this.y <= 4) {
+        this.checkMoveE();
+        this.checkMoveW();
+        this.checkMoveN();
       }
     }
+  }
+
+  protected checkOtherRules(
+    position: Position,
+    startIndex: number,
+    index: number,
+  ): boolean {
+    // 一次只移动一步
+    return startIndex === index;
   }
 }

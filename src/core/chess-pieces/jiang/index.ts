@@ -1,4 +1,5 @@
 import BaseChessPiece from '../baseChessPiece';
+import type { Position } from '@/types';
 import { EChessCamp, EMaxLength } from '@/types/enum/chess';
 
 export default class Jiang extends BaseChessPiece {
@@ -13,26 +14,38 @@ export default class Jiang extends BaseChessPiece {
     return this;
   }
 
-  protected findPoints() {
-    const points: [number, number][] = [];
-    this.checkPoints('x', this.x + 1, 5, points);
-    this.checkPoints('-x', this.x - 1, 3, points);
-    this.checkPoints(
-      'y',
-      this.y + 1,
-      this.camp === EChessCamp.chu ? EMaxLength.y - 1 : 2,
-      points,
-    );
-    this.checkPoints(
-      '-y',
-      this.y - 1,
-      this.camp === EChessCamp.chu ? EMaxLength.y - 3 : 0,
-      points,
-    );
-    return points;
+  protected checkMoveE(): void {
+    this.checkPoints('x', this.x + 1, 5);
   }
 
-  protected checkOtherRules(startIndex: number, index: number): boolean {
+  protected checkMoveW(): void {
+    this.checkPoints('-x', this.x - 1, 3);
+  }
+
+  protected checkMoveS(): void {
+    if (this.camp === EChessCamp.chu) {
+      this.checkPoints('y', this.y + 1, EMaxLength.y - 1);
+    }
+    if (this.camp === EChessCamp.han) {
+      this.checkPoints('y', this.y + 1, 2);
+    }
+  }
+
+  protected checkMoveN(): void {
+    if (this.camp === EChessCamp.chu) {
+      this.checkPoints('-y', this.y - 1, EMaxLength.y - 3);
+    }
+    if (this.camp === EChessCamp.han) {
+      this.checkPoints('-y', this.y - 1, 0);
+    }
+  }
+
+  protected checkOtherRules(
+    position: Position,
+    startIndex: number,
+    index: number,
+  ): boolean {
+    // 一次只移动一步
     return startIndex === index;
   }
 }

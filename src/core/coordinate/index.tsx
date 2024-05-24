@@ -32,7 +32,7 @@ export default class Coordinate {
     return this;
   }
 
-  getCoordinate(): [x: number, y: number] {
+  getCoordinate(): [number, number] {
     return [this.x, this.y];
   }
 

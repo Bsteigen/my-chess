@@ -14,15 +14,15 @@ $han-color: #e35425;
   transition: left 1s, top 1s; /* 添加过渡效果 */
 }
 .camp_chu {
-  border: 1px solid $chu-color;
+  border: 2px solid $chu-color;
   
   background-color: $chu-color;
 }
 .camp_han {
-  border: 1px solid $han-color;
+  border: 2px solid $han-color;
   background-color: $han-color;
 }
 .selected {
-  background-color: #f9ff4f;
+  background-color: #f7f8f1;
   color: #000;
 }

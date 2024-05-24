@@ -2,7 +2,10 @@ import React from 'react';
 import Coordinate from '../coordinate';
 import chess from '../chess';
 import { EChessCamp, EMaxLength } from '@/types/enum/chess';
+import type { Position } from '@/types';
 
+const Mx = EMaxLength.x - 1;
+const My = EMaxLength.y - 1;
 export default abstract class BaseChessPiece extends Coordinate {
   size: number = 50;
 
@@ -45,7 +48,12 @@ export default abstract class BaseChessPiece extends Coordinate {
     return this;
   }
 
-  moveByCoordinate(coordinate: [x: number, y: number]) {
+  /**
+   * 移动到指定点位
+   * @param coordinate 坐标点位
+   * @returns this
+   */
+  moveByCoordinate(coordinate: [number, number]) {
     this.moveX(coordinate[0]).moveY(coordinate[1]);
     return this;
   }
@@ -60,8 +68,19 @@ export default abstract class BaseChessPiece extends Coordinate {
     return this;
   }
 
-  protected checkOtherRules(startIndex: number, index: number): boolean {
-    return isNaN(startIndex + index);
+  protected checkOtherRules(
+    position: Position,
+    startIndex: number,
+    index: number,
+  ): boolean;
+
+  protected checkOtherRules() {
+    return true;
+  }
+
+  protected checkExtraPoints(chessPieces: BaseChessPiece[]) {
+    const p = chessPieces[0];
+    p && p.camp !== this.camp && this.points.push(p.getCoordinate());
   }
 
   /**
@@ -70,7 +89,7 @@ export default abstract class BaseChessPiece extends Coordinate {
    * @param index 当前坐标轴的calculatedPosition方向延伸的index
    * @returns (index: number) => [number, number]
    */
-  protected getPointByIndex(calculatedPosition: 'x' | '-x' | 'y' | '-y') {
+  protected getPointByIndex(calculatedPosition: Position) {
     return (index: number): [number, number] => {
       // 计算方向为x, 则 x 轴为可变换, 否则固定为当前x
       const x = calculatedPosition.includes('x') ? index : this.x;
@@ -81,26 +100,25 @@ export default abstract class BaseChessPiece extends Coordinate {
   }
 
   /**
-   * 计算点位
+   * 计算空白点位
+   * @param calculatedPosition 计算方向
    * @param start 当前位置,可为x或y
    * @param end 最大边界位置
-   * @param points 点位收集列表
-   * @param calculatedPosition 计算方向
    * @returns void
    */
   protected checkPoints(
-    calculatedPosition: 'x' | '-x' | 'y' | '-y',
+    calculatedPosition: Position,
     start: number,
     end: number,
-    points: [number, number][],
   ) {
     let i = start;
     const dic = calculatedPosition.includes('-');
+    const chessPieces: BaseChessPiece[] = [];
     while (1) {
       if (dic ? i < end : i > end) {
         break;
       }
-      if (!this.checkOtherRules(start, i)) {
+      if (!this.checkOtherRules(calculatedPosition, start, i)) {
         break;
       }
       // 获取点位根据当前棋子的坐标轴
@@ -108,35 +126,66 @@ export default abstract class BaseChessPiece extends Coordinate {
       // 计算当前位置是否有棋子
       const p = chess.findOneByCoordinate(point);
       if (p) {
-        // 有棋子,并且为非本阵营棋子, 则添加, 否则跳出循环
-        p.camp !== this.camp && points.push(point);
-        break;
+        chessPieces.push(p);
       }
-      points.push(point);
+      // 当遇到棋子时,不在添加空白点位
+      if (chessPieces.length === 0) {
+        this.points.push(point);
+      }
       dic && i--;
       !dic && i++;
     }
+    this.checkExtraPoints(chessPieces);
   }
 
   /**
    * 查找所有当前棋子可移动的点位
-   * @returns [number, number][]
+   * @returns
    */
   protected findPoints() {
-    const points: [number, number][] = [];
-    const Mx = EMaxLength.x - 1;
-    const My = EMaxLength.y - 1;
-    this.checkPoints('x', this.x + 1, Mx, points);
-    this.checkPoints('-x', this.x - 1, 0, points);
-    this.checkPoints('y', this.y + 1, My, points);
-    this.checkPoints('-y', this.y - 1, 0, points);
-    return points;
+    // 以当前坐标为原点, 延x轴正向计算
+    this.checkMoveE();
+    // 以当前坐标为原点, 延x轴负向计算
+    this.checkMoveW();
+    // 以当前坐标为原点, 延y轴正向计算
+    this.checkMoveS();
+    // 以当前坐标为原点, 延y轴负向计算
+    this.checkMoveN();
+  }
+
+  /**
+   *  以当前坐标为原点, 延x轴正向计算 x
+   */
+  protected checkMoveE() {
+    this.checkPoints('x', this.x + 1, Mx);
+  }
+
+  /**
+   * 以当前坐标为原点, 延x轴负向计算 -x
+   */
+  protected checkMoveW() {
+    this.checkPoints('-x', this.x - 1, 0);
+  }
+
+  /**
+   * 以当前坐标为原点, 延y轴正向计算 y
+   */
+  protected checkMoveS() {
+    this.checkPoints('y', this.y + 1, My);
+  }
+
+  /**
+   * 以当前坐标为原点, 延y轴负向计算 -y
+   */
+  protected checkMoveN() {
+    this.checkPoints('-y', this.y - 1, 0);
   }
 
   /**
    * 计算当前棋子可移动的点位
    */
   calculatePoints(): void {
-    this.setPoints(this.findPoints());
+    this.setPoints([]);
+    this.findPoints();
   }
 }

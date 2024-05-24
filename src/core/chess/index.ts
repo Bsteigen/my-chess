@@ -8,7 +8,7 @@ export class Chess {
     this.chessPieces = cps;
   }
 
-  findOneByCoordinate(position: [x: number, y: number]) {
+  findOneByCoordinate(position: [number, number]) {
     const item = this.chessPieces.filter(
       item => item.x === position[0] && item.y === position[1],
     )[0];
