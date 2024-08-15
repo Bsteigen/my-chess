@@ -4,11 +4,16 @@ import BaseChessPiece from '@/core/chess-pieces/baseChessPiece';
 import { EChessCamp } from '@/types/enum/chess';
 import Coordinate from '@/core/coordinate';
 
+// 棋子组件，用于展示棋盘上的棋子及其行为
 export default function ChessPieces() {
+  // 当前选中的棋子
   const [selected, setSelected] = useState<BaseChessPiece>();
+  // 当前行动的阵营
   const [currentCamp, setCurrentCamp] = useState<EChessCamp>(EChessCamp.han);
 
   console.log(selected, 'selected');
+
+  // 处理坐标点击事件
   const handleCoordinates = (item: Coordinate) => {
     if (!selected) {
       return;
@@ -23,6 +28,7 @@ export default function ChessPieces() {
     }
   };
 
+  // 处理棋子点击事件
   const handleChessPieces = (item: BaseChessPiece) => {
     if (item.camp === currentCamp) {
       selected?.onBlur();
@@ -31,6 +37,8 @@ export default function ChessPieces() {
       setSelected(item);
     }
   };
+
+  // 渲染棋子
   const renderChess = () => {
     return chess.chessPieces.map(item => {
       const Render = item.render;
@@ -40,6 +48,7 @@ export default function ChessPieces() {
     });
   };
 
+  // 使用useMemo优化渲染坐标
   const renderCoordinate = useMemo(() => {
     if (!selected) {
       return null;

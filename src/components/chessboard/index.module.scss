@@ -6,17 +6,17 @@ $stroke-width: $width;
 $border: $border-width $border-style $border-color;
 
 .chessboard {
-  width: 640px;
-  height: 720px;
+  width: 64vh;
+  height: 72vh;
   border: $border;
   
   > section:nth-child(2) {
-    height: 80px;
+    height: 8vh;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    font-size: 30px;
-    letter-spacing: 5px;
+    font-size: 3vh;
+    letter-spacing: 0.5vh;
     > span:nth-child(2) {
       transform: scale(-1);
     }
@@ -31,11 +31,11 @@ $border: $border-width $border-style $border-color;
     stroke-width: $stroke-width;
   }
   > ul {
-    height: 80px;
+    height: 8vh;
     display: flex;
     > li {
-      width: 80px;
-      height: 80px;
+      width: 8vh;
+      height: 8vh;
       display: flex;
       flex-direction: column;
       border-bottom: $border;
@@ -53,21 +53,21 @@ $border: $border-width $border-style $border-color;
   > div:nth-last-child(1) {
     height: 0;
     > svg:nth-last-child(1) {
-      transform: translate(240px, -480px);
+      transform: translate(24vh, -48vh);
     }
     > svg:nth-last-child(2) {
-      transform: translate(240px, -320px);
+      transform: translate(24vh, -32vh);
     }
   }
 }
 
 .tag {
-  width: 10px;
-  height: 10px;
+  width: 1vh;
+  height: 1vh;
   border-left: $border;
   border-bottom: $border;
 }
 
 .tag_wrap {
-  padding: 5px;
+  padding: 0.5vh;
 }

@@ -7,19 +7,19 @@ $han-color: #e35425;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 25px;
+  font-size: 2.5vh;
   position: absolute;
   z-index: 1;
   color: #fff;
   transition: left 1s, top 1s; /* 添加过渡效果 */
 }
 .camp_chu {
-  border: 2px solid $chu-color;
+  border: 0.2vh solid $chu-color;
   
   background-color: $chu-color;
 }
 .camp_han {
-  border: 2px solid $han-color;
+  border: 0.2vh solid $han-color;
   background-color: $han-color;
 }
 .selected {

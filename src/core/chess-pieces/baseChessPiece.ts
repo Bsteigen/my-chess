@@ -7,7 +7,7 @@ import type { Position } from '@/types';
 const Mx = EMaxLength.x - 1;
 const My = EMaxLength.y - 1;
 export default abstract class BaseChessPiece extends Coordinate {
-  size: number = 50;
+  size: number = 5;
 
   children: React.ReactNode = '';
 

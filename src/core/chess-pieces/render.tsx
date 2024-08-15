@@ -4,20 +4,12 @@ import { IRenderChessPieceProps } from '@/types/interface';
 import { EChessCamp } from '@/types/enum/chess';
 
 export default function Render(props: IRenderChessPieceProps) {
-  const {
-    children,
-    size = 50,
-    x = 0,
-    y = 0,
-    camp,
-    checked,
-    onSelected,
-  } = props;
+  const { children, size = 5, x = 0, y = 0, camp, checked, onSelected } = props;
   const style = {
-    width: size,
-    height: size,
-    left: x * fixedLength - size / 2,
-    top: y * fixedLength - size / 2,
+    width: `${size}vh`,
+    height: `${size}vh`,
+    left: `${x * fixedLength - size / 2}vh`,
+    top: `${y * fixedLength - size / 2}vh`,
   };
   return (
     <div
@@ -34,4 +26,4 @@ export default function Render(props: IRenderChessPieceProps) {
   );
 }
 
-export const fixedLength = 80;
+export const fixedLength = 8;

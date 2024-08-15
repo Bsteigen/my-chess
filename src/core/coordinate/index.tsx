@@ -9,7 +9,7 @@ export default class Coordinate {
 
   y: number = 0;
 
-  size: number = 10;
+  size: number = 1;
 
   checked: boolean = true;
 
