@@ -1,7 +1,6 @@
 $chu-color: #284878;
 $han-color: #e35425;
 
-
 .chess_pieces_wrap {
   border-radius: 50%;
   display: flex;
@@ -15,7 +14,7 @@ $han-color: #e35425;
 }
 .camp_chu {
   border: 0.2vh solid $chu-color;
-  
+
   background-color: $chu-color;
 }
 .camp_han {
