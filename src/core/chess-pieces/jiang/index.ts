@@ -5,39 +5,19 @@ import { EChessCamp, EMaxLength } from '@/types/enum/chess';
 export default class Jiang extends BaseChessPiece {
   constructor(x?: number, y?: number, size?: number) {
     super('帅', x, y, size);
+    this.setMoveScope({ x: [3, 5], y: [0, 2] });
   }
 
-  protected getValue() {
-    if (this.camp === EChessCamp.chu) {
-      this.setChildren('将');
-    }
-    return this;
+  protected updateChildrenIsChu(): void {
+    this.setChildren('将');
   }
 
-  protected checkMoveE(): void {
-    this.checkPoints('x', this.x + 1, 5);
-  }
-
-  protected checkMoveW(): void {
-    this.checkPoints('-x', this.x - 1, 3);
-  }
-
-  protected checkMoveS(): void {
-    if (this.camp === EChessCamp.chu) {
-      this.checkPoints('y', this.y + 1, EMaxLength.y - 1);
+  setCamp(camp: EChessCamp) {
+    if (camp === EChessCamp.chu) {
+      this.updateChildrenIsChu();
+      this.setMoveScope({ y: [EMaxLength.y - 3, EMaxLength.y - 1] });
     }
-    if (this.camp === EChessCamp.han) {
-      this.checkPoints('y', this.y + 1, 2);
-    }
-  }
-
-  protected checkMoveN(): void {
-    if (this.camp === EChessCamp.chu) {
-      this.checkPoints('-y', this.y - 1, EMaxLength.y - 3);
-    }
-    if (this.camp === EChessCamp.han) {
-      this.checkPoints('-y', this.y - 1, 0);
-    }
+    return super.setCamp(camp);
   }
 
   protected checkOtherRules(

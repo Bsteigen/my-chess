@@ -17,6 +17,12 @@ export default abstract class BaseChessPiece extends Coordinate {
 
   points: [number, number][] = [];
 
+  // 棋子的移动范围
+  protected moveScope: {
+    x: [min: number, max: number];
+    y: [min: number, max: number];
+  } = { x: [0, Mx], y: [0, My] };
+
   constructor(show?: string, x?: number, y?: number, size?: number) {
     super([x, y]);
     size && this.setSize(size);
@@ -33,7 +39,7 @@ export default abstract class BaseChessPiece extends Coordinate {
     return this;
   }
 
-  setChildren(children: React.ReactNode) {
+  protected setChildren(children: React.ReactNode) {
     this.children = children;
     return this;
   }
@@ -45,6 +51,23 @@ export default abstract class BaseChessPiece extends Coordinate {
 
   move(x: number, y: number) {
     this.moveX(x).moveY(y);
+    return this;
+  }
+
+  protected setMoveScope(scope: {
+    x?: [min: number, max: number] | [min: number];
+    y?: [min: number, max: number] | [min: number];
+  }) {
+    if (scope.x) {
+      scope.x.forEach((v, i) => {
+        this.moveScope.x[i] = v;
+      });
+    }
+    if (scope.y) {
+      scope.y.forEach((v, i) => {
+        this.moveScope.y[i] = v;
+      });
+    }
     return this;
   }
 
@@ -89,14 +112,15 @@ export default abstract class BaseChessPiece extends Coordinate {
    * @param index 当前坐标轴的calculatedPosition方向延伸的index
    * @returns (index: number) => [number, number]
    */
-  protected getPointByIndex(calculatedPosition: Position) {
-    return (index: number): [number, number] => {
-      // 计算方向为x, 则 x 轴为可变换, 否则固定为当前x
-      const x = calculatedPosition.includes('x') ? index : this.x;
-      // 计算方向为y, 则 y 轴为可变换, 否则固定为当前y
-      const y = calculatedPosition.includes('y') ? index : this.y;
-      return [x, y];
-    };
+  protected getPointByIndex(
+    calculatedPosition: Position,
+    index: number,
+  ): [number, number] {
+    // 计算方向为x, 则 x 轴为可变换, 否则固定为当前x
+    const x = calculatedPosition.includes('x') ? index : this.x;
+    // 计算方向为y, 则 y 轴为可变换, 否则固定为当前y
+    const y = calculatedPosition.includes('y') ? index : this.y;
+    return [x, y];
   }
 
   /**
@@ -122,20 +146,33 @@ export default abstract class BaseChessPiece extends Coordinate {
         break;
       }
       // 获取点位根据当前棋子的坐标轴
-      const point = this.getPointByIndex(calculatedPosition)(i);
-      // 计算当前位置是否有棋子
-      const p = chess.findOneByCoordinate(point);
-      if (p) {
-        chessPieces.push(p);
-      }
-      // 当遇到棋子时,不在添加空白点位
-      if (chessPieces.length === 0) {
-        this.points.push(point);
+      const point = this.getPointByIndex(calculatedPosition, i);
+      // 计算点位是否超出边界 超出边界不处理
+      if (this.checkOverflowByDirection(point)) {
+        // 计算当前位置是否有棋子
+        const p = chess.findOneByCoordinate(point);
+        if (p) {
+          chessPieces.push(p);
+        }
+        // 当遇到棋子时,不在添加空白点位
+        if (chessPieces.length === 0) {
+          this.points.push(point);
+        }
       }
       dic && i--;
       !dic && i++;
     }
     this.checkExtraPoints(chessPieces);
+  }
+
+  protected checkOverflowByDirection(point: [number, number]): boolean {
+    const { x, y } = this.moveScope;
+    return (
+      point[0] >= x[0] &&
+      point[0] <= x[1] &&
+      point[1] >= y[0] &&
+      point[1] <= y[1]
+    );
   }
 
   /**
@@ -157,28 +194,28 @@ export default abstract class BaseChessPiece extends Coordinate {
    *  以当前坐标为原点, 延x轴正向计算 x
    */
   protected checkMoveE() {
-    this.checkPoints('x', this.x + 1, Mx);
+    this.checkPoints('x', this.x + 1, this.moveScope.x[1]);
   }
 
   /**
    * 以当前坐标为原点, 延x轴负向计算 -x
    */
   protected checkMoveW() {
-    this.checkPoints('-x', this.x - 1, 0);
+    this.checkPoints('-x', this.x - 1, this.moveScope.x[0]);
   }
 
   /**
    * 以当前坐标为原点, 延y轴正向计算 y
    */
   protected checkMoveS() {
-    this.checkPoints('y', this.y + 1, My);
+    this.checkPoints('y', this.y + 1, this.moveScope.y[1]);
   }
 
   /**
    * 以当前坐标为原点, 延y轴负向计算 -y
    */
   protected checkMoveN() {
-    this.checkPoints('-y', this.y - 1, 0);
+    this.checkPoints('-y', this.y - 1, this.moveScope.y[0]);
   }
 
   /**

@@ -1,23 +1,38 @@
 import Jiang from '../jiang';
+import type { Position } from '@/types';
 
 export default class Shi extends Jiang {
-  protected getValue(): this {
+  constructor(x?: number, y?: number, size?: number) {
+    super(x, y, size);
+    this.setChildren('仕');
+  }
+
+  protected updateChildrenIsChu(): void {
     this.setChildren('士');
-    return this;
   }
 
   protected getPointByIndex(
-    calculatedPosition: 'x' | '-x' | 'y' | '-y',
-  ): (index: number) => [number, number] {
-    const dic = calculatedPosition.includes('-');
-    const baseX = dic ? this.x - 1 : this.x + 1;
-    const baseY = dic ? this.y - 1 : this.y + 1;
-    return (index: number): [number, number] => {
-      // 计算方向为x, 则 x 轴为可变换, 否则固定为当前x
-      const x = calculatedPosition.includes('x') ? index : baseX;
-      // 计算方向为y, 则 y 轴为可变换, 否则固定为当前y
-      const y = calculatedPosition.includes('y') ? index : baseY;
-      return [x, y];
-    };
+    calculatedPosition: Position,
+    index: number,
+  ): [number, number] {
+    /**
+     * (4, 1) (3, 0)
+     * x (index, this.y - 1) (5, 0) (4, -1)
+     * -x (index, this.y + 1) (3, 2) (2, 1)
+     * y (this.x + 1, index) (5, 2) (4, 1)
+     * -y (this.x - 1, index) (3, 0) (2, -1)
+     */
+    switch (calculatedPosition) {
+      case 'x':
+        return [index, this.y - 1];
+      case '-x':
+        return [index, this.y + 1];
+      case 'y':
+        return [this.x + 1, index];
+      case '-y':
+        return [this.x - 1, index];
+      default:
+        return [-1, -1];
+    }
   }
 }

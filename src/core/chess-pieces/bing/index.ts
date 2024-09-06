@@ -7,11 +7,11 @@ export default class Bing extends BaseChessPiece {
     super('兵', x, y, size);
   }
 
-  protected getValue() {
-    if (this.camp === EChessCamp.chu) {
+  setCamp(camp: EChessCamp): this {
+    if (camp === EChessCamp.chu) {
       this.setChildren('卒');
     }
-    return this;
+    return super.setCamp(camp);
   }
 
   protected findPoints() {
