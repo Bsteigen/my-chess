@@ -24,13 +24,13 @@ export default class Shi extends Jiang {
      */
     switch (calculatedPosition) {
       case 'x':
-        return [index, this.y - 1];
+        return [index, this.y - this.getMoveStep()];
       case '-x':
-        return [index, this.y + 1];
+        return [index, this.y + this.getMoveStep()];
       case 'y':
-        return [this.x + 1, index];
+        return [this.x + this.getMoveStep(), index];
       case '-y':
-        return [this.x - 1, index];
+        return [this.x - this.getMoveStep(), index];
       default:
         return [-1, -1];
     }

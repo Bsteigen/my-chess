@@ -23,10 +23,21 @@ export default abstract class BaseChessPiece extends Coordinate {
     y: [min: number, max: number];
   } = { x: [0, Mx], y: [0, My] };
 
+  protected moveStep: number = 1;
+
   constructor(show?: string, x?: number, y?: number, size?: number) {
     super([x, y]);
     size && this.setSize(size);
     show && this.setChildren(show);
+  }
+
+  protected setMoveStep(step: number) {
+    this.moveStep = step;
+    return this;
+  }
+
+  protected getMoveStep() {
+    return this.moveStep;
   }
 
   setPoints(points: [number, number][]) {
@@ -148,7 +159,7 @@ export default abstract class BaseChessPiece extends Coordinate {
       // 获取点位根据当前棋子的坐标轴
       const point = this.getPointByIndex(calculatedPosition, i);
       // 计算点位是否超出边界 超出边界不处理
-      if (this.checkOverflowByDirection(point)) {
+      if (this.checkConformToRules(point)) {
         // 计算当前位置是否有棋子
         const p = chess.findOneByCoordinate(point);
         if (p) {
@@ -159,13 +170,16 @@ export default abstract class BaseChessPiece extends Coordinate {
           this.points.push(point);
         }
       }
-      dic && i--;
-      !dic && i++;
+      if (dic) {
+        i -= this.getMoveStep();
+      } else {
+        i += this.getMoveStep();
+      }
     }
     this.checkExtraPoints(chessPieces);
   }
 
-  protected checkOverflowByDirection(point: [number, number]): boolean {
+  protected checkConformToRules(point: [number, number]): boolean {
     const { x, y } = this.moveScope;
     return (
       point[0] >= x[0] &&
@@ -194,28 +208,28 @@ export default abstract class BaseChessPiece extends Coordinate {
    *  以当前坐标为原点, 延x轴正向计算 x
    */
   protected checkMoveE() {
-    this.checkPoints('x', this.x + 1, this.moveScope.x[1]);
+    this.checkPoints('x', this.x + this.getMoveStep(), this.moveScope.x[1]);
   }
 
   /**
    * 以当前坐标为原点, 延x轴负向计算 -x
    */
   protected checkMoveW() {
-    this.checkPoints('-x', this.x - 1, this.moveScope.x[0]);
+    this.checkPoints('-x', this.x - this.getMoveStep(), this.moveScope.x[0]);
   }
 
   /**
    * 以当前坐标为原点, 延y轴正向计算 y
    */
   protected checkMoveS() {
-    this.checkPoints('y', this.y + 1, this.moveScope.y[1]);
+    this.checkPoints('y', this.y + this.getMoveStep(), this.moveScope.y[1]);
   }
 
   /**
    * 以当前坐标为原点, 延y轴负向计算 -y
    */
   protected checkMoveN() {
-    this.checkPoints('-y', this.y - 1, this.moveScope.y[0]);
+    this.checkPoints('-y', this.y - this.getMoveStep(), this.moveScope.y[0]);
   }
 
   /**
