@@ -2,7 +2,7 @@ import React from 'react';
 import Coordinate from '../coordinate';
 import chess from '../chess';
 import { EChessCamp, EMaxLength } from '@/types/enum/chess';
-import type { Position } from '@/types';
+import type { Point, Position } from '@/types';
 
 const Mx = EMaxLength.x - 1;
 const My = EMaxLength.y - 1;
@@ -15,7 +15,7 @@ export default abstract class BaseChessPiece extends Coordinate {
 
   camp: EChessCamp = EChessCamp.han;
 
-  points: [number, number][] = [];
+  points: Point[] = [];
 
   // 棋子的移动范围
   protected moveScope: {
@@ -40,7 +40,7 @@ export default abstract class BaseChessPiece extends Coordinate {
     return this.moveStep;
   }
 
-  setPoints(points: [number, number][]) {
+  setPoints(points: Point[]) {
     this.points = points;
     return this;
   }
@@ -87,7 +87,7 @@ export default abstract class BaseChessPiece extends Coordinate {
    * @param coordinate 坐标点位
    * @returns this
    */
-  moveByCoordinate(coordinate: [number, number]) {
+  moveByCoordinate(coordinate: Point) {
     this.moveX(coordinate[0]).moveY(coordinate[1]);
     return this;
   }
@@ -121,12 +121,12 @@ export default abstract class BaseChessPiece extends Coordinate {
    * 根据棋子的移动规则计算calculatedPosition方向的可移动点位, 不同棋子可对其拓展
    * @param calculatedPosition 计算点位的坐标轴,x or y or -x or -y
    * @param index 当前坐标轴的calculatedPosition方向延伸的index
-   * @returns (index: number) => [number, number]
+   * @returns (index: number) => Point
    */
   protected getPointByIndex(
     calculatedPosition: Position,
     index: number,
-  ): [number, number] {
+  ): Point {
     // 计算方向为x, 则 x 轴为可变换, 否则固定为当前x
     const x = calculatedPosition.includes('x') ? index : this.x;
     // 计算方向为y, 则 y 轴为可变换, 否则固定为当前y
@@ -179,7 +179,7 @@ export default abstract class BaseChessPiece extends Coordinate {
     this.checkExtraPoints(chessPieces);
   }
 
-  protected checkConformToRules(point: [number, number]): boolean {
+  protected checkConformToRules(point: Point): boolean {
     const { x, y } = this.moveScope;
     return (
       point[0] >= x[0] &&

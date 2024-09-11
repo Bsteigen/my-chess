@@ -1,6 +1,6 @@
 import BaseChessPiece from '../baseChessPiece';
 import chess from '@/core/chess';
-import type { Position } from '@/types';
+import type { Point, Position } from '@/types';
 import { EChessCamp, EMaxLength } from '@/types/enum/chess';
 
 export default class Xiang extends BaseChessPiece {
@@ -28,7 +28,7 @@ export default class Xiang extends BaseChessPiece {
   protected getPointByIndex(
     calculatedPosition: Position,
     index: number,
-  ): [number, number] {
+  ): Point {
     switch (calculatedPosition) {
       case 'x':
         return [index, this.y - this.getMoveStep()];
@@ -43,7 +43,7 @@ export default class Xiang extends BaseChessPiece {
     }
   }
 
-  protected checkConformToRules(point: [number, number]): boolean {
+  protected checkConformToRules(point: Point): boolean {
     /**
      * 排除象的中间有棋子的点位
      *  *[4, 2]

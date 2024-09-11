@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import Render from '../chess-pieces/render';
 
 import { IRenderChessPieceProps } from '@/types/interface';
+import { Point } from '@/types';
 
 export default class Coordinate {
   x: number = 0;
@@ -17,7 +18,7 @@ export default class Coordinate {
 
   private _update?: () => void;
 
-  constructor(point: [x?: number, y?: number]) {
+  constructor(point: Partial<Point>) {
     point[0] && this.moveX(point[0]);
     point[1] && this.moveY(point[1]);
   }
@@ -32,7 +33,7 @@ export default class Coordinate {
     return this;
   }
 
-  getCoordinate(): [number, number] {
+  getCoordinate(): Point {
     return [this.x, this.y];
   }
 

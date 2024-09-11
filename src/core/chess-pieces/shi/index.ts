@@ -1,5 +1,5 @@
 import Jiang from '../jiang';
-import type { Position } from '@/types';
+import type { Point, Position } from '@/types';
 
 export default class Shi extends Jiang {
   constructor(x?: number, y?: number, size?: number) {
@@ -14,7 +14,7 @@ export default class Shi extends Jiang {
   protected getPointByIndex(
     calculatedPosition: Position,
     index: number,
-  ): [number, number] {
+  ): Point {
     /**
      * (4, 1) (3, 0)
      * x (index, this.y - 1) (5, 0) (4, -1)

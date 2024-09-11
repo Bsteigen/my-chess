@@ -1,4 +1,5 @@
 import { chessPieces as cps } from './init';
+import type { Point } from '@/types';
 import { EChessCamp } from '@/types/enum/chess';
 
 export class Chess {
@@ -8,7 +9,7 @@ export class Chess {
     this.chessPieces = cps;
   }
 
-  findOneByCoordinate(position: [number, number]) {
+  findOneByCoordinate(position: Point) {
     const item = this.chessPieces.filter(
       item => item.x === position[0] && item.y === position[1],
     )[0];
