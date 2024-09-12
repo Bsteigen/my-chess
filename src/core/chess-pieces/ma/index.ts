@@ -5,6 +5,11 @@ import type { Point, Position } from '@/types';
 export default class Ma extends BaseChessPiece {
   private needRemovePoints: Point[] = [];
 
+  private stumblingBlocksPoints: {
+    stumblingBlock: Point;
+    points: Point[];
+  }[] = [];
+
   constructor(x?: number, y?: number, size?: number) {
     super('馬', x, y, size);
   }
@@ -14,10 +19,25 @@ export default class Ma extends BaseChessPiece {
     startIndex: number,
     index: number,
   ): boolean {
-    if (position.includes('-')) {
-      return index >= startIndex - 1;
-    }
-    return index <= startIndex + 1;
+    return index === startIndex;
+  }
+
+  moveByCoordinate(coordinate: Point): this {
+    this.needRemovePoints = [];
+    return super.moveByCoordinate(coordinate);
+  }
+
+  onFocus(): this {
+    this.needRemovePoints = [];
+    this.initStumblingBlocksPoints();
+    return super.onFocus();
+  }
+
+  protected findPoints(): void {
+    this.setMoveStep(1);
+    super.findPoints();
+    this.setMoveStep(2);
+    super.findPoints();
   }
 
   protected getPointByIndex(
@@ -26,37 +46,34 @@ export default class Ma extends BaseChessPiece {
   ): Point {
     switch (calculatedPosition) {
       case 'x':
-        if (index - this.x === 1) {
-          return [index, this.y - 2];
-        }
-        return [index, this.y - 1];
+        return [index, this.getMoveStep() === 1 ? this.y - 2 : this.y - 1];
       case '-x':
-        if (index - this.x === -1) {
-          return [index, this.y + 2];
-        }
-        return [index, this.y + 1];
+        return [index, this.getMoveStep() === 1 ? this.y + 2 : this.y + 1];
       case 'y':
-        if (index - this.y === 1) {
-          return [this.x + 2, index];
-        }
-        return [this.x + 1, index];
+        return [this.getMoveStep() === 1 ? this.x + 2 : this.x + 1, index];
       case '-y':
-        if (index - this.y === -1) {
-          return [this.x - 2, index];
-        }
-        return [this.x - 1, index];
+        return [this.getMoveStep() === 1 ? this.x - 2 : this.x - 1, index];
       default:
         return [-1, -1];
     }
   }
 
   protected checkConformToRules(point: Point): boolean {
-    const { x, y } = this;
+    if (this.needRemovePoints.length === 0) {
+      for (const sbp of this.stumblingBlocksPoints) {
+        const p = chess.findOneByCoordinate(sbp.stumblingBlock);
+        p && this.needRemovePoints.push(...sbp.points);
+      }
+    }
+    const needRemove = this.needRemovePoints.some(
+      p => p[0] === point[0] && p[1] === point[1],
+    );
+    return !needRemove && super.checkConformToRules(point);
+  }
 
-    const stumblingBlocksPoints: {
-      stumblingBlock: Point;
-      points: Point[];
-    }[] = [
+  private initStumblingBlocksPoints() {
+    const { x, y } = this;
+    this.stumblingBlocksPoints = [
       {
         stumblingBlock: [x, y - 1],
         points: [
@@ -86,16 +103,6 @@ export default class Ma extends BaseChessPiece {
         ],
       },
     ];
-    if (this.needRemovePoints.length === 0) {
-      for (const sbp of stumblingBlocksPoints) {
-        const p = chess.findOneByCoordinate(sbp.stumblingBlock);
-        p && this.needRemovePoints.push(...sbp.points);
-      }
-    }
-    const needRemove = this.needRemovePoints.some(
-      p => p[0] === point[0] && p[1] === point[1],
-    );
-    return !needRemove && super.checkConformToRules(point);
   }
 }
 /**
