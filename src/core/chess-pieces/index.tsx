@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+'use client';
+import { useCallback, useMemo, useState } from 'react';
 import chess from '../chess';
 import BaseChessPiece from '@/core/chess-pieces/baseChessPiece';
 import { EChessCamp } from '@/types/enum/chess';
@@ -14,19 +15,22 @@ export default function ChessPieces() {
   console.log(selected, 'selected');
 
   // 处理坐标点击事件
-  const handleCoordinates = (item: Coordinate) => {
-    if (!selected) {
-      return;
-    }
-    if (selected.camp === currentCamp) {
-      selected.onBlur();
-      const cp = chess.findOneByCoordinate(item.getCoordinate());
-      selected.moveByCoordinate(item.getCoordinate());
-      chess.delete(cp?.id);
-      setSelected(undefined);
-      setCurrentCamp(chess.changeCamp(selected.camp));
-    }
-  };
+  const handleCoordinates = useCallback(
+    (item: Coordinate) => {
+      if (!selected) {
+        return;
+      }
+      if (selected.camp === currentCamp) {
+        selected.onBlur();
+        const cp = chess.findOneByCoordinate(item.getCoordinate());
+        selected.moveByCoordinate(item.getCoordinate());
+        chess.delete(cp?.id);
+        setSelected(undefined);
+        setCurrentCamp(chess.changeCamp(selected.camp));
+      }
+    },
+    [selected, currentCamp],
+  );
 
   // 处理棋子点击事件
   const handleChessPieces = (item: BaseChessPiece) => {
@@ -61,7 +65,7 @@ export default function ChessPieces() {
         <Render key={item.id} onSelected={() => handleCoordinates(item)} />
       );
     });
-  }, [selected]);
+  }, [handleCoordinates, selected]);
 
   return (
     <div>

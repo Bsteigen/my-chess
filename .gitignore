@@ -1,31 +1,36 @@
-.DS_Store
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-.pnp
+# dependencies
+/node_modules
+/.pnp
 .pnp.js
-.env.local
-.env.*.local
-.history
-*.log*
+.yarn/install-state.gz
 
-node_modules/
-.yarn-integrity
-.pnpm-store/
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
 *.tsbuildinfo
-.eslintcache
-.changeset/pre.json
-
-dist/
-coverage/
-release/
-output/
-output_resource/
-log/
-
-.vscode/**/*
-!.vscode/settings.json
-!.vscode/extensions.json
-.idea/
-
-**/*/typings/auto-generated
-
-modern.config.local.*
+next-env.d.ts
