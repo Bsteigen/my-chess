@@ -1,53 +1,75 @@
 'use client';
-import { useCallback, useMemo, useState } from 'react';
-import chess from '../chess';
+import { useCallback, useMemo } from 'react';
 import BaseChessPiece from '@/core/chess-pieces/baseChessPiece';
-import { EChessCamp } from '@/types/enum/chess';
 import Coordinate from '@/core/coordinate';
+import Render from './render';
+import { useRequest, useUpdateEffect } from 'ahooks';
+import axios from 'axios';
+import type { TChessPieces } from '../chess/init';
+import { EChessCamp } from '@/types/enum/chess';
 
 // 棋子组件，用于展示棋盘上的棋子及其行为
 export default function ChessPieces() {
-  // 当前选中的棋子
-  const [selected, setSelected] = useState<BaseChessPiece>();
   // 当前行动的阵营
-  const [currentCamp, setCurrentCamp] = useState<EChessCamp>(EChessCamp.han);
+
+  const { data: chessPieces, refresh: refreshChessPieces } = useRequest(() =>
+    axios.get<TChessPieces>('/api/data').then(res => res.data),
+  );
+
+  const { data: currentCamp, refresh: refreshCamp } = useRequest(
+    () => axios.get<EChessCamp>('/api/data/camp').then(res => res.data),
+    { pollingInterval: 1000 },
+  );
+
+  const selected = useMemo(
+    () => chessPieces?.filter(item => item.checked)[0],
+    [chessPieces],
+  );
+
+  const refresh = useCallback(() => {
+    refreshCamp();
+    refreshChessPieces();
+  }, [refreshCamp, refreshChessPieces]);
+
+  useUpdateEffect(() => refreshChessPieces(), [currentCamp]);
 
   console.log(selected, 'selected');
 
   // 处理坐标点击事件
   const handleCoordinates = useCallback(
-    (item: Coordinate) => {
+    async (item: Coordinate) => {
       if (!selected) {
         return;
       }
       if (selected.camp === currentCamp) {
-        selected.onBlur();
-        const cp = chess.findOneByCoordinate(item.getCoordinate());
-        selected.moveByCoordinate(item.getCoordinate());
-        chess.delete(cp?.id);
-        setSelected(undefined);
-        setCurrentCamp(chess.changeCamp(selected.camp));
+        await axios.put('/api/action/move', {
+          currentId: selected.id,
+          target: item.getCoordinate(),
+        });
+        refresh();
       }
     },
-    [selected, currentCamp],
+    [selected, currentCamp, refresh],
   );
 
   // 处理棋子点击事件
-  const handleChessPieces = (item: BaseChessPiece) => {
+  const handleChessPieces = async (item: BaseChessPiece) => {
     if (item.camp === currentCamp) {
-      selected?.onBlur();
-      item.onFocus();
-      item.calculatePoints();
-      setSelected(item);
+      await axios.put<BaseChessPiece>('/api/action/selected', item.id);
+      refresh();
     }
   };
 
   // 渲染棋子
   const renderChess = () => {
-    return chess.chessPieces.map(item => {
-      const Render = item.render;
+    if (!chessPieces) return null;
+    return chessPieces.map(item => {
       return (
-        <Render key={item.id} onSelected={() => handleChessPieces(item)} />
+        <Render
+          key={item.id}
+          {...item}
+          onSelected={() => handleChessPieces(item)}
+        />
       );
     });
   };
@@ -60,9 +82,12 @@ export default function ChessPieces() {
     const coordinates =
       selected?.points.map(point => new Coordinate(point)) || [];
     return coordinates.map(item => {
-      const Render = item.render;
       return (
-        <Render key={item.id} onSelected={() => handleCoordinates(item)} />
+        <Render
+          key={item.id}
+          {...item}
+          onSelected={() => handleCoordinates(item)}
+        />
       );
     });
   }, [handleCoordinates, selected]);

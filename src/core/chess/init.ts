@@ -7,7 +7,7 @@ import Jiang from '../chess-pieces/jiang';
 import Pao from '../chess-pieces/pao';
 import { EChessCamp } from '@/types/enum/chess';
 
-export const chessPieces = [
+const chessPieces = [
   new Che(0, 0).setCamp(EChessCamp.han),
   new Che(8, 0).setCamp(EChessCamp.han),
   new Bing(0, 3).setCamp(EChessCamp.han),
@@ -42,3 +42,10 @@ export const chessPieces = [
   new Pao(1, 7).setCamp(EChessCamp.chu),
   new Pao(7, 7).setCamp(EChessCamp.chu),
 ];
+
+const init = () => chessPieces;
+
+export default init;
+
+
+export type TChessPieces = typeof chessPieces;

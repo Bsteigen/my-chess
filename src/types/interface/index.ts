@@ -1,4 +1,4 @@
-import { EChessCamp } from '../enum/chess';
+import type { EChessCamp, EItemType } from '../enum/chess';
 
 export interface IRenderChessPieceProps {
   checked?: boolean;
@@ -6,7 +6,9 @@ export interface IRenderChessPieceProps {
   size?: number;
   x?: number;
   y?: number;
+  id?: string;
   camp?: EChessCamp;
+  type?: EItemType;
   onSelected?: () => void;
 }
 

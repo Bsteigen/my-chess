@@ -1,6 +1,6 @@
 import Coordinate from '../coordinate';
 import chess from '../chess';
-import { EChessCamp, EMaxLength } from '@/types/enum/chess';
+import { EChessCamp, EItemType, EMaxLength } from '@/types/enum/chess';
 import type { Point, Position } from '@/types';
 
 const Mx = EMaxLength.x - 1;
@@ -14,6 +14,8 @@ export default abstract class BaseChessPiece extends Coordinate {
 
   points: Point[] = [];
 
+  children: string = '';
+
   // 棋子的移动范围
   protected moveScope: {
     x: [min: number, max: number];
@@ -26,6 +28,7 @@ export default abstract class BaseChessPiece extends Coordinate {
     super([x, y]);
     size && this.setSize(size);
     show && this.setChildren(show);
+    this.type = EItemType.CHESS_PIECE;
   }
 
   protected setMoveStep(step: number) {
@@ -35,6 +38,11 @@ export default abstract class BaseChessPiece extends Coordinate {
 
   protected getMoveStep() {
     return this.moveStep;
+  }
+
+  protected setChildren(children: string) {
+    this.children = children;
+    return this;
   }
 
   setPoints(points: Point[]) {
