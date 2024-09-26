@@ -10,9 +10,9 @@ export default class Coordinate {
 
   y: number = 0;
 
-  size: number = 1;
+  size: number = 5;
 
-  checked: boolean = true;
+  children: React.ReactNode = '';
 
   id: string = uuid();
 
@@ -21,6 +21,10 @@ export default class Coordinate {
   constructor(point: Partial<Point>) {
     point[0] && this.moveX(point[0]);
     point[1] && this.moveY(point[1]);
+    const children = (
+      <div className="w-[1vh] h-[1vh] rounded-[50%] bg-[#f2d12d]" />
+    );
+    this.setChildren(children);
   }
 
   moveX(x: number) {
@@ -44,6 +48,11 @@ export default class Coordinate {
 
   update() {
     this._update?.();
+  }
+
+  protected setChildren(children: React.ReactNode) {
+    this.children = children;
+    return this;
   }
 
   protected getValue() {

@@ -1,4 +1,3 @@
-import React from 'react';
 import Coordinate from '../coordinate';
 import chess from '../chess';
 import { EChessCamp, EMaxLength } from '@/types/enum/chess';
@@ -8,8 +7,6 @@ const Mx = EMaxLength.x - 1;
 const My = EMaxLength.y - 1;
 export default abstract class BaseChessPiece extends Coordinate {
   size: number = 5;
-
-  children: React.ReactNode = '';
 
   checked: boolean = false;
 
@@ -47,11 +44,6 @@ export default abstract class BaseChessPiece extends Coordinate {
 
   setSize(size: number) {
     this.size = size;
-    return this;
-  }
-
-  protected setChildren(children: React.ReactNode) {
-    this.children = children;
     return this;
   }
 

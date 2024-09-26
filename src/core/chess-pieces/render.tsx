@@ -19,9 +19,10 @@ export default function Render(props: IRenderChessPieceProps) {
         [styles.camp_chu]: camp === EChessCamp.chu,
         [styles.camp_han]: camp === EChessCamp.han,
         [styles.selected]: checked,
+        'rotate-180': camp === EChessCamp.han
       })}
     >
-      <span className="pointer-events-none">{children}</span>
+      <div className="pointer-events-none">{children}</div>
     </div>
   );
 }
