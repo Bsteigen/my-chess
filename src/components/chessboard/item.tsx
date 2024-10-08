@@ -2,8 +2,6 @@
 import clsx from 'clsx';
 import styles from './index.module.scss';
 import Tag from './tag';
-import dynamic from 'next/dynamic';
-const Line = dynamic(() => import('./line'), { ssr: false });
 
 const vertically = [1, 2, 3, 4, 5, 6, 7, 8];
 const horizontally = [1, 2, 3, 4];
@@ -34,7 +32,8 @@ export default function Item() {
           })}
         </ul>
       ))}
-      <Line />
+      <hr className="rotate-[48.6deg] border-[#000] absolute top-[7vh] left-[15.3125vh] w-[18.602755172285637vh]" />
+      <hr className="rotate-[131.4deg] border-[#000] absolute top-[7vh] left-[15.3125vh] w-[18.602755172285637vh]" />
     </main>
   );
 }

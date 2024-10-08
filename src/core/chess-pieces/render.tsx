@@ -18,7 +18,7 @@ export default function Render(props: IRenderChessPieceProps) {
   const style = {
     width: `${size}vh`,
     height: `${size}vh`,
-    left: `${x * fixedLength - size / 2}vh`,
+    left: `${x * (fixedLength - 7 / 8) - size / 2}vh`,
     top: `${y * fixedLength - size / 2}vh`,
   };
   return (
@@ -43,4 +43,4 @@ export default function Render(props: IRenderChessPieceProps) {
   );
 }
 
-export const fixedLength = 8;
+export const fixedLength = 7;
